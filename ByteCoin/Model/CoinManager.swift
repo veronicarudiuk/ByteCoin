@@ -17,7 +17,6 @@ struct CoinManager {
 
     func fetchCoinPrice (for currency: String) {
         let urlString = "\(baseURL)/\(currency)?apikey=\(apiKey)"
-        print(urlString)
         perfomRequest(with: urlString)
     }
     
@@ -34,12 +33,25 @@ struct CoinManager {
                 }
                 
                 if let safeData = data {
-                    var backToString = String(data: safeData, encoding: .utf8)
-                    print(backToString!)
+//                    var backToString = String(data: safeData, encoding: .utf8)
+//                    print(backToString!)
+                    if let rate = parseJSON(safeData) {
+                        print(rate)
+                    }
                 }
             }
             
             task.resume()
+        }
+    }
+    
+    func parseJSON(_ coinData: Data) -> Double? {
+        let decoder = JSONDecoder()
+        do {
+            let decodedData = try decoder.decode(CoinData.self, from: coinData)
+            return decodedData.rate
+        } catch {
+            return nil
         }
     }
 }
