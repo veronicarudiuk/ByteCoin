@@ -14,13 +14,27 @@ class ViewController: UIViewController {
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var currencyPicker: UIPickerView!
     
-    let coinManager = CoinManager()
+    var coinManager = CoinManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        coinManager.delegate = self
         currencyPicker.dataSource = self
         currencyPicker.delegate = self
+    }
+}
+
+//MARK: - CoinManagerDelegate
+extension ViewController: CoinManagerDelegate {
+    func didUpdateRate(rate: Double, currency: String) {
+        DispatchQueue.main.async {
+            self.bitcoinLabel.text = String(format: "%.2f", rate)
+            self.currencyLabel.text = currency
+        }
+    }
+    
+    func didFailWithError(error: Error) {
+        print(error)
     }
 }
 
